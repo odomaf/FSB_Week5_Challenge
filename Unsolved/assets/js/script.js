@@ -10,13 +10,13 @@
 // ===== State & Initialization =====
 
 // Load tasks and nextId from localStorage (or use defaults)
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-let nextId = JSON.parse(localStorage.getItem('nextId')) || 1;
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let nextId = JSON.parse(localStorage.getItem("nextId")) || 1;
 
 // Utility to save tasks + nextId
 function saveState() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    localStorage.setItem('nextId', JSON.stringify(nextId));
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem("nextId", JSON.stringify(nextId));
 }
 
 // ===== Core Functions (implement these) =====
@@ -25,7 +25,11 @@ function saveState() {
 // - Return a unique id
 // - Increment nextId and persist using saveState()
 function generateTaskId() {
-    // Your code here
+  uniqueId = nextId;
+  nextId = nextId++;
+  return uniqueId;
+
+  // Your code here
 }
 
 // TODO: createTaskCard(task)
@@ -41,7 +45,15 @@ function generateTaskId() {
 //     - Add a warning style if due soon / today
 //     - Add an overdue style if past due
 function createTaskCard(task) {
-    // Your code here
+  //all of this needs to change to use the task parameter above, but this is the function it should be in
+  console.log(`Task title: ${task.title}`);
+  console.log(`Task Due Date: ${task.dueDate}`);
+  console.log(`Task Description: ${task.Description}`);
+
+  cardTitle.textContent = taskTitleEl.val();
+  $(function () {
+    $("#sampleCard").draggable();
+  });
 }
 
 // TODO: renderTaskList()
@@ -50,7 +62,10 @@ function createTaskCard(task) {
 // - For each task, create a card and append it to the correct lane
 // - After rendering, make task cards draggable with jQuery UI
 function renderTaskList() {
-    // Your code here
+  console.log("RenderingTaskList");
+  console.log(tasks);
+
+  // Your code here
 }
 
 // TODO: handleAddTask(event)
@@ -64,7 +79,30 @@ function renderTaskList() {
 // - Push to tasks array, save, re-render
 // - Reset the form and close the modal
 function handleAddTask(event) {
-    // Your code here
+  event.preventDefault();
+  console.log("Added a task");
+  console.log(`Event ${event}`);
+  const taskTitle = $("#taskTitle").val();
+  const taskDueDate = $("#taskDueDate").val();
+  const taskDescription = $("#taskDescription").val();
+  const taskID = generateTaskId();
+  const taskStatus = "todo";
+  console.log(`Task id: ${taskID}`);
+  console.log(`Task title: ${taskTitle}`);
+  console.log(`Task Due Date: ${taskDueDate}`);
+  console.log(`Task Description: ${taskDescription}`);
+
+  const task = {
+    id: taskID,
+    title: taskTitle,
+    dueDate: taskDueDate,
+    description: taskDescription,
+    status: taskStatus,
+  };
+
+  tasks.push(task);
+
+  renderTaskList();
 }
 
 // TODO: handleDeleteTask(event)
@@ -72,7 +110,7 @@ function handleAddTask(event) {
 // - Remove that task from tasks array
 // - Save and re-render
 function handleDeleteTask(event) {
-    // Your code here
+  // Your code here
 }
 
 // TODO: handleDrop(event, ui)
@@ -81,36 +119,36 @@ function handleDeleteTask(event) {
 // - Update the task's status in the tasks array
 // - Save and re-render
 function handleDrop(event, ui) {
-    // Your code here
+  // Your code here
 }
 
 // ===== Document Ready =====
 
 $(function () {
-    // Show current date in header using Day.js
-    $('#current-date').text(dayjs().format('[Today:] dddd, MMM D, YYYY'));
+  // Show current date in header using Day.js
+  $("#current-date").text(dayjs().format("[Today:] dddd, MMM D, YYYY"));
 
-    // Initialize datepicker for due date
-    // Hint: keep format consistent and use it in your parsing
-    $('#taskDueDate').datepicker({
-        dateFormat: 'yy-mm-dd',
-        changeMonth: true,
-        changeYear: true,
-        minDate: 0,
-    });
+  // Initialize datepicker for due date
+  // Hint: keep format consistent and use it in your parsing
+  $("#taskDueDate").datepicker({
+    dateFormat: "yy-mm-dd",
+    changeMonth: true,
+    changeYear: true,
+    minDate: 0,
+  });
 
-    // Render tasks on load (will do nothing until you implement renderTaskList)
-    renderTaskList();
+  // Render tasks on load (will do nothing until you implement renderTaskList)
+  renderTaskList();
 
-    // Form submit handler
-    $('#taskForm').on('submit', handleAddTask);
+  // Form submit handler
+  $("#taskForm").on("submit", handleAddTask);
 
-    // Make lanes droppable
-    // TODO: configure droppable to accept task cards and use handleDrop
-    $('.lane-body').droppable({
-        // accept: '.task-card',
-        // drop: handleDrop,
-    });
+  // Make lanes droppable
+  // TODO: configure droppable to accept task cards and use handleDrop
+  $(".lane-body").droppable({
+    // accept: '.task-card',
+    // drop: handleDrop,
+  });
 });
 
 // NOTE:
