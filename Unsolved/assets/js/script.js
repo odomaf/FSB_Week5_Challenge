@@ -19,17 +19,14 @@ function saveState() {
   localStorage.setItem("nextId", JSON.stringify(nextId));
 }
 
-// ===== Core Functions (implement these) =====
+// ===== Core Functions =====
 
-// TODO: generateTaskId()
-// - Return a unique id
+// - Return a unique id to use for a task
 // - Increment nextId and persist using saveState()
 function generateTaskId() {
   uniqueId = nextId;
   nextId = nextId++;
   return uniqueId;
-
-  // Your code here
 }
 
 // TODO: createTaskCard(task)
@@ -101,7 +98,7 @@ function handleAddTask(event) {
   };
 
   tasks.push(task);
-
+  $("#taskModal").modal("toggle");
   renderTaskList();
 }
 
