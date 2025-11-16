@@ -24,8 +24,11 @@ function saveState() {
 // - Return a unique id to use for a task
 // - Increment nextId and persist using saveState()
 function generateTaskId() {
+  //console.log(`On entering generateTaskId, nextId is ${nextId}`);
   uniqueId = nextId;
-  nextId = nextId++;
+  //console.log(`uniqueID is ${uniqueId}`);
+  nextId++;
+  //console.log(`nextId is now ${nextId}`);
   return uniqueId;
 }
 
@@ -43,13 +46,47 @@ function generateTaskId() {
 //     - Add an overdue style if past due
 function createTaskCard(task) {
   //all of this needs to change to use the task parameter above, but this is the function it should be in
+  console.log("Creating Task Cards");
   console.log(`Task title: ${task.title}`);
   console.log(`Task Due Date: ${task.dueDate}`);
-  console.log(`Task Description: ${task.Description}`);
+  console.log(`Task Description: ${task.description}`);
 
-  cardTitle.textContent = taskTitleEl.val();
+  //get swim lane cards will go on
+  //create all elements cards will use
+  var toDoSwimlaneEl = document.getElementById("todo-cards");
+  var cardEl = document.createElement("div");
+  var cardBodyEl = document.createElement("div");
+  var cardTitleEl = document.createElement("h5");
+  var cardDueDateEl = document.createElement("h6");
+  var cardDescriptionEl = document.createElement("p");
+  var cardStatusEl = document.createElement("h6");
+
+  //fill elements with data
+  cardTitleEl.textContent = task.title;
+  cardDueDateEl.textContent = task.dueDate;
+  cardDescriptionEl.textContent = task.description;
+  cardStatusEl.textContent = task.status;
+
+  //set element attributes
+  cardEl.setAttribute("id", task.id);
+  cardEl.setAttribute("class", "card");
+  cardEl.setAttribute("style", "width: 18rem;");
+  cardBodyEl.setAttribute("class", "card-body");
+  cardTitleEl.setAttribute("class", "card-title");
+  cardDueDateEl.setAttribute("class", "card-subtitle mb-2 text-body-secondary");
+  cardDescriptionEl.setAttribute("class", "card-text");
+  cardStatusEl.setAttribute("class", "card-subtitle mb-2 text-body-secondary");
+
+  //append elements
+  cardBodyEl.appendChild(cardTitleEl);
+  cardBodyEl.appendChild(cardDueDateEl);
+  cardBodyEl.appendChild(cardDescriptionEl);
+  cardBodyEl.appendChild(cardStatusEl);
+  cardEl.appendChild(cardBodyEl);
+  toDoSwimlaneEl.appendChild(cardEl);
+
   $(function () {
-    $("#sampleCard").draggable();
+    $(task.id).draggable();
   });
 }
 
@@ -59,8 +96,17 @@ function createTaskCard(task) {
 // - For each task, create a card and append it to the correct lane
 // - After rendering, make task cards draggable with jQuery UI
 function renderTaskList() {
+  //clear task board for fresh render
+  var toDoSwimlaneEl = document.getElementById("todo-cards");
+  toDoSwimlaneEl.innerHTML = "";
   console.log("RenderingTaskList");
   console.log(tasks);
+  for (i = 0; i < tasks.length; i++) {
+    const task = tasks[i];
+    // console.log(`Task Id: ${task.id}`);
+    // console.log(`Task Title: ${task.title}`);
+    createTaskCard(task);
+  }
 
   // Your code here
 }
@@ -77,17 +123,18 @@ function renderTaskList() {
 // - Reset the form and close the modal
 function handleAddTask(event) {
   event.preventDefault();
-  console.log("Added a task");
-  console.log(`Event ${event}`);
+  //   console.log("Added a task");
+  //   console.log(`Event ${event}`);
+
   const taskTitle = $("#taskTitle").val();
   const taskDueDate = $("#taskDueDate").val();
   const taskDescription = $("#taskDescription").val();
   const taskID = generateTaskId();
   const taskStatus = "todo";
-  console.log(`Task id: ${taskID}`);
-  console.log(`Task title: ${taskTitle}`);
-  console.log(`Task Due Date: ${taskDueDate}`);
-  console.log(`Task Description: ${taskDescription}`);
+  //   console.log(`Task id: ${taskID}`);
+  //   console.log(`Task title: ${taskTitle}`);
+  //   console.log(`Task Due Date: ${taskDueDate}`);
+  //   console.log(`Task Description: ${taskDescription}`);
 
   const task = {
     id: taskID,
@@ -98,7 +145,14 @@ function handleAddTask(event) {
   };
 
   tasks.push(task);
+  console.log("Clearing modal content");
+  //$("#taskTitle").val = "Hello World";
+  //   taskTitle.textContent = "Goodnight Moon";
+  //   taskDueDate.val = "";
+  //   taskDescription.val = "";
+  console.log("toggling modal off");
   $("#taskModal").modal("toggle");
+
   renderTaskList();
 }
 
@@ -133,6 +187,9 @@ $(function () {
     changeYear: true,
     minDate: 0,
   });
+
+  //clear tasks on page load
+  tasks = [];
 
   // Render tasks on load (will do nothing until you implement renderTaskList)
   renderTaskList();
