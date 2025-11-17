@@ -46,26 +46,25 @@ function generateTaskId() {
 //     - Add an overdue style if past due
 function createTaskCard(task) {
   //all of this needs to change to use the task parameter above, but this is the function it should be in
-  console.log("Creating Task Cards");
-  console.log(`Task title: ${task.title}`);
-  console.log(`Task Due Date: ${task.dueDate}`);
-  console.log(`Task Description: ${task.description}`);
+  console.log(`Creating Card: ${task.title}`);
 
   //get swim lane cards will go on
   //create all elements cards will use
-  var toDoSwimlaneEl = document.getElementById("todo-cards");
   var cardEl = document.createElement("div");
   var cardBodyEl = document.createElement("div");
   var cardTitleEl = document.createElement("h5");
   var cardDueDateEl = document.createElement("h6");
   var cardDescriptionEl = document.createElement("p");
   var cardStatusEl = document.createElement("h6");
+  var cardRemoveButtonEl = document.createElement("button");
+  var cardFormEl = document.createElement("form");
 
   //fill elements with data
   cardTitleEl.textContent = task.title;
   cardDueDateEl.textContent = task.dueDate;
   cardDescriptionEl.textContent = task.description;
   cardStatusEl.textContent = task.status;
+  cardRemoveButtonEl.innerHTML = "Delete Task";
 
   //set element attributes
   cardEl.setAttribute("id", task.id);
@@ -76,18 +75,30 @@ function createTaskCard(task) {
   cardDueDateEl.setAttribute("class", "card-subtitle mb-2 text-body-secondary");
   cardDescriptionEl.setAttribute("class", "card-text");
   cardStatusEl.setAttribute("class", "card-subtitle mb-2 text-body-secondary");
+  const formId = "form-" + task.id;
+  cardFormEl.setAttribute("id", formId);
+  cardRemoveButtonEl.setAttribute("class", "btn btn-danger");
+  const buttonId = "button-" + task.id;
+  cardRemoveButtonEl.setAttribute("id", buttonId);
 
   //append elements
+  cardFormEl.appendChild(cardRemoveButtonEl);
   cardBodyEl.appendChild(cardTitleEl);
   cardBodyEl.appendChild(cardDueDateEl);
   cardBodyEl.appendChild(cardDescriptionEl);
   cardBodyEl.appendChild(cardStatusEl);
+  cardBodyEl.appendChild(cardFormEl);
   cardEl.appendChild(cardBodyEl);
-  toDoSwimlaneEl.appendChild(cardEl);
 
-  $(function () {
-    $(task.id).draggable();
-  });
+  return cardEl;
+  //when this is uncommented, it creates an undefined type error
+  //which usually means the element is being improperly accessed
+  //or the element isn't yet rendered on the page. Maybe
+  //this needs to be in a different location? Maybe I'm not calling something
+  //properly? Revisit after other major functions are working
+  // $(function () {
+  //   $(task.id).draggable();
+  // });
 }
 
 // TODO: renderTaskList()
@@ -97,15 +108,24 @@ function createTaskCard(task) {
 // - After rendering, make task cards draggable with jQuery UI
 function renderTaskList() {
   //clear task board for fresh render
-  var toDoSwimlaneEl = document.getElementById("todo-cards");
+  const toDoSwimlaneEl = document.getElementById("todo-cards");
   toDoSwimlaneEl.innerHTML = "";
   console.log("RenderingTaskList");
   console.log(tasks);
+
+  //for each item in the task list, append it to the
+  //appropriate lane for its status &
+  //add button functionality (should button functionality be its own function?)
   for (i = 0; i < tasks.length; i++) {
     const task = tasks[i];
+    const buttonId = "#button-" + task.id;
     // console.log(`Task Id: ${task.id}`);
     // console.log(`Task Title: ${task.title}`);
-    createTaskCard(task);
+    const card = createTaskCard(task);
+    // console.log(card);
+    toDoSwimlaneEl.appendChild(card);
+    const button = document.getElementById(buttonId);
+    $(buttonId).on("submit", handleDeleteTask);
   }
 
   // Your code here
@@ -124,7 +144,6 @@ function renderTaskList() {
 function handleAddTask(event) {
   event.preventDefault();
   //   console.log("Added a task");
-  //   console.log(`Event ${event}`);
 
   const taskTitle = $("#taskTitle").val();
   const taskDueDate = $("#taskDueDate").val();
@@ -146,10 +165,6 @@ function handleAddTask(event) {
 
   tasks.push(task);
   console.log("Clearing modal content");
-  //$("#taskTitle").val = "Hello World";
-  //   taskTitle.textContent = "Goodnight Moon";
-  //   taskDueDate.val = "";
-  //   taskDescription.val = "";
   console.log("toggling modal off");
   $("#taskModal").modal("toggle");
 
@@ -161,6 +176,7 @@ function handleAddTask(event) {
 // - Remove that task from tasks array
 // - Save and re-render
 function handleDeleteTask(event) {
+  console.log("This is where we will delete a task");
   // Your code here
 }
 
@@ -189,9 +205,10 @@ $(function () {
   });
 
   //clear tasks on page load
+  //we may not need to do this, esp if we want tasks to persist. Consider?
   tasks = [];
 
-  // Render tasks on load (will do nothing until you implement renderTaskList)
+  // Render tasks on load
   renderTaskList();
 
   // Form submit handler
