@@ -107,6 +107,21 @@ body {
   gap: 0.25rem;
 }
 
+.task-card-delete-button {
+  background-color: var(--danger);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.9rem;
+  border: none;
+  box-shadow: 4px 4px 4px lightgrey;
+}
+
+.task-card-delete-button:hover {
+  transform: translateY(-1px);
+  background-color: darkred;
+  box-shadow: 4px 4px 4px lightgrey;
+}
+
 /* Status-based colors (students will apply via JS) */
 .task-due-warning {
   background-color: var(--warning);
