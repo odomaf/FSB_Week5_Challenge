@@ -48,8 +48,7 @@ function createTaskCard(task) {
   //all of this needs to change to use the task parameter above, but this is the function it should be in
   console.log(`Creating Card: ${task.title}`);
 
-  //get swim lane cards will go on
-  //create all elements cards will use
+  //create all elements card will use
   var cardEl = document.createElement("div");
   var cardBodyEl = document.createElement("div");
   var cardTitleEl = document.createElement("h5");
@@ -68,16 +67,16 @@ function createTaskCard(task) {
 
   //set element attributes
   cardEl.setAttribute("id", task.id);
-  cardEl.setAttribute("class", "card");
+  cardEl.setAttribute("class", "task-card");
   cardEl.setAttribute("style", "width: 18rem;");
   cardBodyEl.setAttribute("class", "card-body");
-  cardTitleEl.setAttribute("class", "card-title");
-  cardDueDateEl.setAttribute("class", "card-subtitle mb-2 text-body-secondary");
-  cardDescriptionEl.setAttribute("class", "card-text");
-  cardStatusEl.setAttribute("class", "card-subtitle mb-2 text-body-secondary");
+  cardTitleEl.setAttribute("class", "task-card-title");
+  cardDueDateEl.setAttribute("class", "task-card-meta");
+  cardDescriptionEl.setAttribute("class", "task-card-text");
+  cardStatusEl.setAttribute("class", "task-card-meta");
   const formId = "form-" + task.id;
   cardFormEl.setAttribute("id", formId);
-  cardRemoveButtonEl.setAttribute("class", "btn btn-danger");
+  cardRemoveButtonEl.setAttribute("class", "task-card-delete-button");
   const buttonId = "button-" + task.id;
   cardRemoveButtonEl.setAttribute("id", buttonId);
 
@@ -91,14 +90,6 @@ function createTaskCard(task) {
   cardEl.appendChild(cardBodyEl);
 
   return cardEl;
-  //when this is uncommented, it creates an undefined type error
-  //which usually means the element is being improperly accessed
-  //or the element isn't yet rendered on the page. Maybe
-  //this needs to be in a different location? Maybe I'm not calling something
-  //properly? Revisit after other major functions are working
-  // $(function () {
-  //   $(task.id).draggable();
-  // });
 }
 
 // TODO: renderTaskList()
@@ -114,8 +105,8 @@ function renderTaskList() {
   console.log(tasks);
 
   //for each item in the task list, append it to the
-  //appropriate lane for its status &
-  //add button functionality
+  //appropriate lane for its status,
+  //add button functionality, & add draggable functionality
   for (i = 0; i < tasks.length; i++) {
     const task = tasks[i];
     const buttonId = "#button-" + task.id;
@@ -126,6 +117,10 @@ function renderTaskList() {
     toDoSwimlaneEl.appendChild(card);
     const button = document.getElementById(buttonId);
     $(buttonId).on("click", handleDeleteTask);
+    const taskElId = "#" + task.id;
+    $(function () {
+      $(taskElId).draggable();
+    });
   }
 }
 
@@ -175,33 +170,28 @@ function handleAddTask(event) {
 // - Save and re-render
 function handleDeleteTask(event) {
   event.preventDefault();
-  console.log("This is where we will delete a task");
-  console.log(`Event target id: #${event.target.id}`);
+
+  //get taskId for card to delete
   const buttonId = "#" + event.target.id;
   const taskId = $(buttonId).parent().parent().parent()[0].id;
-  console.log(`Discovered taskId: ${taskId}`);
+  // console.log(`Discovered taskId: ${taskId}`);
 
-  // console.log(`Card Element: ${cardEl.id}`);
-  // console.log(`Card Id: ${cardEl.id}`);
-  // console.log(`Parent of event target: ${event.target.parent()}`);
-
+  //find the task with the correct id in the tasks array
   const task = tasks.find((obj) => obj.id == taskId);
-  console.log(`Deleting task with id ${task.id}  and title ${task.title}`);
+  // console.log(`Deleting task with id ${task.id}  and title ${task.title}`);
 
-  for (i = 0; i < tasks.length; i++) {
-    console.log(`Index: ${i}, TaskId: ${tasks[i].id}`);
-  }
-
+  //get the index of the task we need to delete
   let taskIndex = tasks.findIndex((obj) => obj.id == taskId);
-  console.log(`Task index to delete: ${taskIndex}`);
-  console.log(`Tasks array length: ${tasks.length}`);
+  // console.log(`Task index to delete: ${taskIndex}`);
+  // console.log(`Tasks array length: ${tasks.length}`);
+
+  //remove the task at that index from the tasks array
   if (taskIndex !== -1) {
-    console.log(`Removing task with splice: ${tasks[taskIndex].title}`);
+    // console.log(`Removing task with splice: ${tasks[taskIndex].title}`);
     tasks.splice(taskIndex, 1);
-    console.log(`Tasks array length: ${tasks.length}`);
+    // console.log(`Tasks array length: ${tasks.length}`);
   }
   renderTaskList();
-  // Your code here
 }
 
 // TODO: handleDrop(event, ui)
@@ -230,7 +220,7 @@ $(function () {
 
   //clear tasks on page load
   //we may not need to do this, esp if we want tasks to persist. Consider?
-  tasks = [];
+  // tasks = [];
   // console.log(`Length of tasks array: ${tasks.length}`);
   // Render tasks on load
   renderTaskList();
