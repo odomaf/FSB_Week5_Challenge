@@ -115,7 +115,7 @@ function renderTaskList() {
 
   //for each item in the task list, append it to the
   //appropriate lane for its status &
-  //add button functionality (should button functionality be its own function?)
+  //add button functionality
   for (i = 0; i < tasks.length; i++) {
     const task = tasks[i];
     const buttonId = "#button-" + task.id;
@@ -125,10 +125,8 @@ function renderTaskList() {
     // console.log(card);
     toDoSwimlaneEl.appendChild(card);
     const button = document.getElementById(buttonId);
-    $(buttonId).on("submit", handleDeleteTask);
+    $(buttonId).on("click", handleDeleteTask);
   }
-
-  // Your code here
 }
 
 // TODO: handleAddTask(event)
@@ -143,7 +141,7 @@ function renderTaskList() {
 // - Reset the form and close the modal
 function handleAddTask(event) {
   event.preventDefault();
-  //   console.log("Added a task");
+  console.log("Pressed the New Task button");
 
   const taskTitle = $("#taskTitle").val();
   const taskDueDate = $("#taskDueDate").val();
@@ -164,8 +162,8 @@ function handleAddTask(event) {
   };
 
   tasks.push(task);
-  console.log("Clearing modal content");
-  console.log("toggling modal off");
+  // console.log("Resetting Form");
+  $("#taskForm").trigger("reset");
   $("#taskModal").modal("toggle");
 
   renderTaskList();
@@ -176,7 +174,33 @@ function handleAddTask(event) {
 // - Remove that task from tasks array
 // - Save and re-render
 function handleDeleteTask(event) {
+  event.preventDefault();
   console.log("This is where we will delete a task");
+  console.log(`Event target id: #${event.target.id}`);
+  const buttonId = "#" + event.target.id;
+  const taskId = $(buttonId).parent().parent().parent()[0].id;
+  console.log(`Discovered taskId: ${taskId}`);
+
+  // console.log(`Card Element: ${cardEl.id}`);
+  // console.log(`Card Id: ${cardEl.id}`);
+  // console.log(`Parent of event target: ${event.target.parent()}`);
+
+  const task = tasks.find((obj) => obj.id == taskId);
+  console.log(`Deleting task with id ${task.id}  and title ${task.title}`);
+
+  for (i = 0; i < tasks.length; i++) {
+    console.log(`Index: ${i}, TaskId: ${tasks[i].id}`);
+  }
+
+  let taskIndex = tasks.findIndex((obj) => obj.id == taskId);
+  console.log(`Task index to delete: ${taskIndex}`);
+  console.log(`Tasks array length: ${tasks.length}`);
+  if (taskIndex !== -1) {
+    console.log(`Removing task with splice: ${tasks[taskIndex].title}`);
+    tasks.splice(taskIndex, 1);
+    console.log(`Tasks array length: ${tasks.length}`);
+  }
+  renderTaskList();
   // Your code here
 }
 
@@ -207,7 +231,7 @@ $(function () {
   //clear tasks on page load
   //we may not need to do this, esp if we want tasks to persist. Consider?
   tasks = [];
-
+  // console.log(`Length of tasks array: ${tasks.length}`);
   // Render tasks on load
   renderTaskList();
 
