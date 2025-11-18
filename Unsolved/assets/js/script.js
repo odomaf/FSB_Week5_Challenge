@@ -200,12 +200,19 @@ function handleDeleteTask(event) {
 // - Update the task's status in the tasks array
 // - Save and re-render
 function handleDrop(event, ui) {
-  // Your code here
+  console.log("You dropped a card on me");
 }
 
 // ===== Document Ready =====
 
 $(function () {
+  // Make lanes droppable
+  // TODO: configure droppable to accept task cards and use handleDrop
+  $(".lane-body").droppable({
+    accept: ".task-card",
+    drop: handleDrop,
+  });
+
   // Show current date in header using Day.js
   $("#current-date").text(dayjs().format("[Today:] dddd, MMM D, YYYY"));
 
@@ -220,20 +227,13 @@ $(function () {
 
   //clear tasks on page load
   //we may not need to do this, esp if we want tasks to persist. Consider?
-  // tasks = [];
+  tasks = [];
   // console.log(`Length of tasks array: ${tasks.length}`);
   // Render tasks on load
   renderTaskList();
 
   // Form submit handler
   $("#taskForm").on("submit", handleAddTask);
-
-  // Make lanes droppable
-  // TODO: configure droppable to accept task cards and use handleDrop
-  $(".lane-body").droppable({
-    // accept: '.task-card',
-    // drop: handleDrop,
-  });
 });
 
 // NOTE:
